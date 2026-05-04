@@ -8,18 +8,46 @@ le 2eme robot se met en route il prend le block et il tourne :
 
 1_   si le block est blue le capteur de droite est sur le blanc et les 2 autres sur le noir     3 gris
 
+         1er gris il tourne a droite
+
+         2eme gris il continue
+
+         3eme gris il recule de 10 cm et quand il arrive sur le 2eme gris il tourne pour avoir le gauche sur le blanc et les 2 autres sur le noir et retourne a la case de depart
 
 
 2_   si le block est vert le capteur de droite est sur le blanc et les 2 autres sur le noir     4 gris
 
+         1er girs il continue pendant 2 seconde puis continue line folowing
+
+         2eme gris il tourne a droite
+
+         3eme gris il continue
+
+         4eme gris il recule de 10 cm et quand il arrive sur le 3eme gris il tourne pour avoir le gauche sur le blanc et les 2 autres sur le noir et retourne a la case de depart
+
+         en rentrant le robot puis avoir les 3 capteur sur le noir
 
 
 3_   si le block est noir le capteur de gauche est sur le blanc et les 2 autres sur le noir     3 gris
 
+         1er gris il tourne a gauche
+
+         2eme gris il continue
+
+         3eme gris il recule de 10 cm et quand il arrive sur le 2eme gris il tourne pour avoir le droite sur le blanc et les 2 autres sur le noir et retourne a la case de depart
 
 
 4_   si le block est rouge le capteur de gauche est sur le blanc et les 2 autres sur le noir    4 gris
 
+         1er girs il continue pendant 2 seconde puis continue line folowing
+
+         2eme gris il tourne a gauche
+
+         3eme gris il continue
+
+         4eme gris il recule de 10 cm et quand il arrive sur le 3eme gris il tourne pour avoir le droite sur le blanc et les 2 autres sur le noir et retourne a la case de depart
 
 
-5_   si le block est de couleur inconnu il marche tout droit 
+5_   si le block est de couleur inconnu il marche tout droit   3 gris
+
+        il arrive au 4eme gris il recule et quand il arrive au 3eme gris 
