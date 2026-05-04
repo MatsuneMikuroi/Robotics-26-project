@@ -1,0 +1,25 @@
+le robot commence au point de depart quand il sort le capteur de droite est sur le blanc les 2 autre sur le noir
+il arrive a une ligne grise ou il prend un block, on fait speed,-speed pour que le capteur de gauche soit sur le blanc et les 2 autres sur le noir 
+il avance pour arriver a une 2eme ligne grise, c'est la ou il s'arrete 0,5 seconde
+il retourne de 5 cm et il reviens a la case de depart
+
+le 1er robot donne un signal au 2eme 
+le 2eme robot se met en route il prend le block et il tourne :
+
+1_   si le block est blue le capteur de droite est sur le blanc et les 2 autres sur le noir     3 gris
+
+
+
+2_   si le block est vert le capteur de droite est sur le blanc et les 2 autres sur le noir     4 gris
+
+
+
+3_   si le block est noir le capteur de gauche est sur le blanc et les 2 autres sur le noir     3 gris
+
+
+
+4_   si le block est rouge le capteur de gauche est sur le blanc et les 2 autres sur le noir    4 gris
+
+
+
+5_   si le block est de couleur inconnu il marche tout droit 
