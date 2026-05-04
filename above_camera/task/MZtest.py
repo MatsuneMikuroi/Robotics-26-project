@@ -35,7 +35,7 @@ robot.sleep(2)
 
 BASE_SPEED = 2.0
 
-PID_WALL_TARGET = 200
+PID_WALL_TARGET = 170
 PID_MAX_DS = 1.5
 
 K = 0.004
@@ -125,11 +125,11 @@ def forward():
 
 
 def turn_left(speed=1.5):
-    robot.set_speed(-speed, speed)
+    robot.set_speed(0.5 speed, speed)
 
 
 def turn_right(speed=1.5):
-    robot.set_speed(speed, -speed)
+    robot.set_speed(speed, 0.5speed)
 
 
 def get_right_wall_value():
