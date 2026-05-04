@@ -4,32 +4,40 @@
 
 1. Go to the server folder
 
+    ```bash
     sudo apt update
     sudo apt upgrade -y
     chmod +x install_server.sh
     ./install_server.sh
+    ```
 
-2. You should have 2 cameras streams. 
+2. You should have 2 cameras streams.
 
+    ```bash
     rtsp://192.168.2.150:8554/cam1
 
     rtsp://192.168.2.150:8554/cam2
+    ```
 
 3. Test the streaming using the python code client.py (if you haven't done the calibration step below the code issues a warning)
 
 If things do not work as expected, modify the mediamtx.yml config file (scroll to the bottom)
 
-    nano mediamtx.yml
-    sudo cp mediamtx.yml /usr/local/etc/mediamtx.yml
-    sudo systemctl daemon-reload
-    sudo systemctl restart mediamtx
+```bash
+nano mediamtx.yml
+sudo cp mediamtx.yml /usr/local/etc/mediamtx.yml
+sudo systemctl daemon-reload
+sudo systemctl restart mediamtx
+```
 
 ## Server setup (macOS)
 
 1. Go to the server folder
 
+    ```bash
     chmod +x install_server_mac.sh
     ./install_server_mac.sh
+    ```
 
 ## Camera calibration
 

@@ -8,9 +8,13 @@ import math
 import numpy as np
 
 
+if len(sys.argv) < 3:
+    print("Usage: python circular_path.py <camera_id> <robot_id>")
+    print("Example: python circular_path.py cam2 208")
+    sys.exit(1)
 
 # initialize tracking (pip install opencv-contrib-python)
-rtsp_url = f"rtsp://192.168.2.150:8554/cam2"
+rtsp_url = f"rtsp://192.168.2.150:8554/{sys.argv[1]}"
 print(f"Connecting to {rtsp_url}...")
 try:
     camera = ArUcoCamera(rtsp_url, marker_size_mm=40)
@@ -19,7 +23,7 @@ except Exception as e:
     sys.exit(1)
 
 MARKER_ID = 0
-MY_IP = '192.168.2.208'
+MY_IP = '192.168.2.{}'.format(sys.argv[2])
 r = wrapper.get_robot(MY_IP)
 
 NORM_SPEED = 2.0
@@ -96,8 +100,8 @@ while r.go_on():
 
         # Marker position in world frame
         t_wm = R_wc @ t_cm + C_w
-        tx = t_wm[0]
-        ty = t_wm[1]
+        tx = t_wm[0, 0]
+        ty = t_wm[1, 0]
 
         # compute angle of current orientation
         head = yaw

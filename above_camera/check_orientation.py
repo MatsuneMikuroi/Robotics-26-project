@@ -20,7 +20,13 @@ code for checking camera values
 
 
 ##################### initialize tracking (camera streaming) ########################
-rtsp_url = f"rtsp://192.168.2.150:8554/cam1"
+if len(sys.argv) < 3:
+    print("Usage: python circular_path.py <camera_id> <robot_id>")
+    print("Example: python circular_path.py cam2 208")
+    sys.exit(1)
+
+# initialize tracking (pip install opencv-contrib-python)
+rtsp_url = f"rtsp://192.168.2.150:8554/{sys.argv[1]}"
 print(f"Connecting to {rtsp_url}...")
 try:
     camera = ArUcoCamera(rtsp_url, marker_size_mm=40)
@@ -28,10 +34,8 @@ except Exception as e:
     print(f"Error initializing tracking stream: {e}")
     sys.exit(1)
 
-###################### Robot setup #################################################
-#IP
-MY_IP = '192.168.2.208' 
-''
+MARKER_ID = 0
+MY_IP = '192.168.2.{}'.format(sys.argv[2])
 r = wrapper.get_robot(MY_IP)
 
 

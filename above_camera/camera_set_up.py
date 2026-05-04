@@ -10,13 +10,23 @@ import time
 import sys
 
 ############# initialize tracking (camera streaming) ###################
-rtsp_url = f"rtsp://192.168.2.150:8554/cam2"
+if len(sys.argv) < 3:
+    print("Usage: python circular_path.py <camera_id> <robot_id>")
+    print("Example: python circular_path.py cam2 208")
+    sys.exit(1)
+
+# initialize tracking (pip install opencv-contrib-python)
+rtsp_url = f"rtsp://192.168.2.150:8554/{sys.argv[1]}"
 print(f"Connecting to {rtsp_url}...")
 try:
     camera = ArUcoCamera(rtsp_url, marker_size_mm=40)
 except Exception as e:
     print(f"Error initializing tracking stream: {e}")
     sys.exit(1)
+
+MARKER_ID = 0
+MY_IP = '192.168.2.{}'.format(sys.argv[2])
+r = wrapper.get_robot(MY_IP)
 
 R_wc = np.array([[-1,0,0],[0,1,0],[0,0,-1]])
 C_w = np.array([[0],[0],[1.1]])
@@ -35,13 +45,8 @@ last_tx, last_ty, last_yaw = None, None, None
 
 frame_count = 0
 
-###################### Robot setup #####################################
-MY_IP = '192.168.2.208' 
-''
-r = wrapper.get_robot(MY_IP)
 
 ################# variables ################
-MARKER_ID = 0    # ArUco marker ID to be change accordingly to the used one
 
 NORM_SPEED = 1.8
 
