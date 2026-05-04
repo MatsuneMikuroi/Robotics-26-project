@@ -18,7 +18,7 @@ CAMERA_ID = sys.argv[1]
 ROBOT_ID = sys.argv[2]
 
 RTSP_URL = f"rtsp://192.168.2.150:8554/{CAMERA_ID}"
-MY_IP = f"192.168.2.{ROBOT_ID}"
+MY_IP = "192.168.2.208"
 
 MARKER_ID = 0
 
