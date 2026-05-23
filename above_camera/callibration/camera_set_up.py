@@ -175,8 +175,6 @@ while r.go_on():
 
         if state == RE_SYNC:
             continue
-
-        r.set_speed(NORM_SPEED,NORM_SPEED)
             
 
     ########### RESYNC ############
