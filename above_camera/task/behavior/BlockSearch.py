@@ -18,6 +18,10 @@ def drive_to_waypoint(tx: float, ty: float, yaw: float, target, norm_speed: floa
     dot = dx_r * dx_t + dy_r * dy_t
     angle_diff = math.atan2(cross, dot)
 
+    if abs(angle_diff) > math.pi / 2:  # facing away: in-place spin, no forward drift
+        sign = 1 if angle_diff > 0 else -1
+        return -norm_speed * 0.35 * sign, norm_speed * 0.35 * sign
+
     # Keep translation while steering to avoid pivot oscillations during scan.
     forward = max(0.55, math.cos(angle_diff))
     turn = max(-0.22, min(0.22, math.sin(angle_diff)))
@@ -73,7 +77,7 @@ def BlockSearch(color: str, ROBOT, tx: float, ty: float, yaw: float,
 
         close_enough  = block.width  >= WIDTH  - EPS_DIST and block.height >= HEIGHT - EPS_DIST;
         not_too_close = block.width  - WIDTH   <= EPS_DIST and block.height - HEIGHT <= EPS_DIST;
-        found = centered and y_centered and close_enough and not_too_close;
+        found = centered and y_centered and close_enough;
 
         # Block RIGHT (x_err > 0): turn > 0 → left forward, right backward → pivot CW → block centres
         turn = max(-1.0, min(1.0, x_err / (CAM_WIDTH / 2)));
