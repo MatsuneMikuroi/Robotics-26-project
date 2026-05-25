@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 
-def _drive_to_waypoint_lane(tx: float, ty: float, yaw: float, target, norm_speed: float) -> tuple[float, float]:
+def drive_to_waypoint(tx: float, ty: float, yaw: float, target, norm_speed: float) -> tuple[float, float]:
     """Rotate-first lane controller for practical scanning.
 
     Compared to min_forward-based motion, this avoids forced forward drift while
@@ -66,24 +66,29 @@ def BlockSearch(color: str, ROBOT, tx: float, ty: float, yaw: float,
         block = next((i for i in objects if str(i.label).lower() == target_label), None);
 
     if block is not None:
-        # Practical approach controller:
-        # 1) Rotate until block is centered in the image.
-        # 2) Drive forward while keeping a small steering correction.
-        center_error = float(block.x_center - CAM_WIDTH / 2);
-        centered = abs(center_error) <= EPS_ROT;
+        # colorLover approach:
+        # 1) Spin to center block horizontally (x_center → cam_width/2).
+        # 2) Drive forward to match size; keep gentle heading correction.
+        # 3) Also check vertical centering (y_center → cam_height/2).
+        x_err = float(block.x_center - CAM_WIDTH / 2);
+        y_err = float(block.y_center - CAM_HEIGHT / 2);  # +ve = block below centre = too far
 
-        close_enough = block.width >= WIDTH - EPS_DIST and block.height >= HEIGHT - EPS_DIST;
-        not_too_close = block.width - WIDTH <= EPS_DIST and block.height - HEIGHT <= EPS_DIST;
-        found = centered and close_enough and not_too_close;
+        centered   = abs(x_err) <= EPS_ROT;
+        y_centered = abs(y_err) <= EPS_DIST * 3;         # wider tolerance (y_center is noisier)
 
-        turn = max(-1.0, min(1.0, center_error / (CAM_WIDTH / 2)));
+        close_enough  = block.width  >= WIDTH  - EPS_DIST and block.height >= HEIGHT - EPS_DIST;
+        not_too_close = block.width  - WIDTH   <= EPS_DIST and block.height - HEIGHT <= EPS_DIST;
+        found = centered and y_centered and close_enough and not_too_close;
+
+        # Block RIGHT (x_err > 0): turn > 0 → left forward, right backward → pivot CW → block centres
+        turn = max(-1.0, min(1.0, x_err / (CAM_WIDTH / 2)));
         if centered:
             base = NORM_SPEED * 0.6;
-            speed_left = base - (NORM_SPEED * 0.25 * turn);
-            speed_right = base + (NORM_SPEED * 0.25 * turn);
+            speed_left  = base + (NORM_SPEED * 0.25 * turn);
+            speed_right = base - (NORM_SPEED * 0.25 * turn);
         else:
-            speed_left = -NORM_SPEED * 0.5 * turn;
-            speed_right = NORM_SPEED * 0.5 * turn;
+            speed_left  =  NORM_SPEED * 0.5 * turn;
+            speed_right = -NORM_SPEED * 0.5 * turn;
 
         speed_left = max(-NORM_SPEED, min(NORM_SPEED, speed_left));
         speed_right = max(-NORM_SPEED, min(NORM_SPEED, speed_right));
@@ -95,17 +100,9 @@ def BlockSearch(color: str, ROBOT, tx: float, ty: float, yaw: float,
 
         if reached_waypoint:
             scan.step();
-        if hasattr(scan, "reached"):
-            speed_left, speed_right = _drive_to_waypoint_lane(
-                tx=tx,
-                ty=ty,
-                yaw=yaw,
-                target=scan.waypoint,
-                norm_speed=NORM_SPEED,
-            )
-        else:
-            speed_left, speed_right = goto(tx, ty, yaw,
-                                           TARGET=scan.waypoint, NORM_SPEED=NORM_SPEED, WALL=WALL,
-                                           min_forward=scan_min_forward);
+        speed_left, speed_right = drive_to_waypoint(
+            tx=tx, ty=ty, yaw=yaw,
+            target=scan.waypoint, norm_speed=NORM_SPEED,
+        )
 
     return speed_left, speed_right, found;

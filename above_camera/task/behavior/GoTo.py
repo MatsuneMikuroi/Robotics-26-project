@@ -32,10 +32,8 @@ def goto(tx: float, ty: float, yaw: float, TARGET: Block = None, NORM_SPEED: flo
     dy_t = path[1] - ty;
     cross = dx_r * dy_t - dy_r * dx_t;
     dot = dx_r * dx_t + dy_r * dy_t;
-    # Negate atan2: the world frame has its x-axis flipped (left-handed), so cross > 0
-    # maps to the physical right instead of the left.  Negating corrects the sign so
-    # that angle_diff > 0 means "target is to the physical left → turn left".
-    angle_diff = -math.atan2(cross, dot);  # signed angle in [-π, π], >0 means target is to the left
+    # Signed heading error in [-pi, pi]. Positive means target is on the left -> turn left.
+    angle_diff = math.atan2(cross, dot);
 
     # Calculate the speed to set to the wheels based on the angle difference and the distance to the target
     dist_to_target = np.sqrt((TARGET.x - tx) ** 2 + (TARGET.y - ty) ** 2);
