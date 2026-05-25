@@ -1,4 +1,3 @@
-from behavior.GoTo import goto
 from utils.Wall import Wall
 from utils.Scan import Scan
 import numpy as np
@@ -17,20 +16,13 @@ def drive_to_waypoint(tx: float, ty: float, yaw: float, target, norm_speed: floa
     dy_t = target.y - ty
     cross = dx_r * dy_t - dy_r * dx_t
     dot = dx_r * dx_t + dy_r * dy_t
-    angle_diff = -math.atan2(cross, dot)
+    angle_diff = math.atan2(cross, dot)
 
-    # If heading error is large, rotate in place first.
-    if abs(angle_diff) > 0.50:
-        turn = max(-1.0, min(1.0, angle_diff / (math.pi / 2)))
-        speed_left = -norm_speed * 0.45 * turn
-        speed_right = norm_speed * 0.45 * turn
-        return speed_left, speed_right
-
-    # Once mostly aligned, move forward with gentle steering.
-    steer = max(-0.6, min(0.6, math.sin(angle_diff)))
-    base = norm_speed * 0.7
-    speed_left = base * (1.0 - steer)
-    speed_right = base * (1.0 + steer)
+    # Keep translation while steering to avoid pivot oscillations during scan.
+    forward = max(0.55, math.cos(angle_diff))
+    turn = max(-0.22, min(0.22, math.sin(angle_diff)))
+    speed_left = norm_speed * 0.8 * (forward - turn)
+    speed_right = norm_speed * 0.8 * (forward + turn)
     return speed_left, speed_right
 
 
@@ -40,7 +32,7 @@ def BlockSearch(color: str, ROBOT, tx: float, ty: float, yaw: float,
                 EPS_DIST: int = 5, EPS_ROT: int = 8,
                 HEIGHT: int = None, WIDTH: int = None,
                 eps_y: float = 0.05,
-                scan_min_forward: float = 0.0) -> (float, float, bool):
+                scan_min_forward: float = 0.0, step: int | None = None) -> (float, float, bool):
     """Block search behavior. The robot will follow a loverColor behavior when the target block
     is visible in camera. Otherwise it performs a boustrophedon scan: sweeping y_max<->y_min and
     stepping in x after each sweep, toward x_min (green) or x_max (red).
@@ -55,6 +47,9 @@ def BlockSearch(color: str, ROBOT, tx: float, ty: float, yaw: float,
 
     if scan.is_done:
         raise SystemExit(f"Search area fully covered, no {color} block found.");
+
+    # if step is not None and step > 0 and step % 500 == 0:
+    #     ROBOT.init_camera()
 
     img: np.ndarray = np.array(ROBOT.get_camera());
     objects = ROBOT.get_detection(img);
@@ -87,8 +82,10 @@ def BlockSearch(color: str, ROBOT, tx: float, ty: float, yaw: float,
             speed_left  = base + (NORM_SPEED * 0.25 * turn);
             speed_right = base - (NORM_SPEED * 0.25 * turn);
         else:
-            speed_left  =  NORM_SPEED * 0.5 * turn;
-            speed_right = -NORM_SPEED * 0.5 * turn;
+            # Crawl forward while steering to reduce in-place left/right dithering.
+            base = NORM_SPEED * 0.18;
+            speed_left  = base + (NORM_SPEED * 0.55 * turn);
+            speed_right = base - (NORM_SPEED * 0.55 * turn);
 
         speed_left = max(-NORM_SPEED, min(NORM_SPEED, speed_left));
         speed_right = max(-NORM_SPEED, min(NORM_SPEED, speed_right));
